@@ -4,14 +4,18 @@ const bcrypt = require('bcrypt');
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.post('/register', userController.register);
-router.post('/login', userController.login);
 
 router.get('/balance', authMiddleware.userAuth, userController.getBalance);
 router.get('/trades', authMiddleware.userAuth, userController.getTrades);
-router.post('/trade-limit', authMiddleware.userAuth, userController.setTradeLimit);
-router.post('/service-toggle', authMiddleware.userAuth, userController.toggleService);
+router.patch('/set-trade-limit', authMiddleware.userAuth, userController.setTradeLimit);
+router.patch('/toggle-service', authMiddleware.userAuth, userController.toggleService);
 router.get('/pl', authMiddleware.userAuth, userController.getPLReports);
+router.get('/account', authMiddleware.userAuth, userController.getAccountInfo);
+router.patch('/update-api-keys', authMiddleware.userAuth, userController.updateApiKeys);
+router.patch('/update-password', authMiddleware.userAuth, userController.updatePassword);
+
+
+
 
 
 // Example User Route
