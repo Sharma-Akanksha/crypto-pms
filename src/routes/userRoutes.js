@@ -13,6 +13,8 @@ router.get('/pl', authMiddleware.userAuth, userController.getPLReports);
 router.get('/account', authMiddleware.userAuth, userController.getAccountInfo);
 router.patch('/update-api-keys', authMiddleware.userAuth, userController.updateApiKeys);
 router.patch('/update-password', authMiddleware.userAuth, userController.updatePassword);
+router.post('/place-order', authMiddleware.userAuth, userController.placeOrder);
+
 
 
 
