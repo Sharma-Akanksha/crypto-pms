@@ -38,22 +38,23 @@ exports.getBalance = async (user) => {
   return response.data;
 };
 
-exports.placeOrder = async (user, orderDetails) => {
-  const method = 'POST';
-  const endpoint = '/api/v2/spot/trade/place-order';
-  const url = 'https://api.bitget.com' + endpoint;
 
-  const body = JSON.stringify(orderDetails);
+// async function placeOrder(exchangeDetails, { orderType, amount }) {
+//   // call exchange API to place buy/sell order
+//   // return { success: true, orderId: 'abc123' } or { success: false, error: '...' }
 
-  const headers = getBitgetHeaders(
-    user.bitgetApiKey,
-    user.bitgetSecretKey,
-    user.bitgetPassphrase,
-    method,
-    endpoint,
-    body
-  );
+//   // Example stub:
+//   return { success: true, orderId: 'order_' + Date.now() };
+// }
 
-  const response = await axios.post(url, body, { headers });
-  return response.data;
-};
+// async function getOrderStatus(exchangeDetails, orderIds) {
+//   // bulk get order status from exchange
+
+//   // Example stub:
+//   return orderIds.map((id) => ({ orderId: id, status: 'executed' }));
+// }
+
+// module.exports = {
+//   placeOrder,
+//   getOrderStatus,
+// };

@@ -142,43 +142,6 @@ exports.updatePassword = async (req, res) => {
   }
 };
 
-exports.placeOrder = async (req, res) => {
-  try {
-    const user = req.user;
-    const { symbol, side, orderType } = req.body;
-
-    if (!symbol || !side || !orderType)
-      return res.status(400).json({ success: false, message: 'Missing required fields' });
-
-    // Fetch balance
-    const balanceData = await exchangeService.getBalance(user);
-    const usdt = balanceData.data.find(c => c.coin === 'USDT');
-    const available = parseFloat(usdt?.available || 0);
-
-    // Calculate order quantity (as per tradeLimit)
-    const percent = user.tradeLimit || 100;
-    const amount = (available * (percent / 100)).toFixed(2);
-
-    if (amount <= 0) return res.status(400).json({ success: false, message: 'Insufficient balance' });
-
-    const orderPayload = {
-      symbol,
-      side,
-      orderType,
-      force: "gtc",
-      quantity: amount
-    };
-
-    const result = await exchangeService.placeOrder(user, orderPayload);
-
-    res.json({ success: true, data: result });
-  } catch (err) {
-    console.error('Place order error:', err.response?.data || err.message);
-    res.status(500).json({ success: false, error: err.response?.data?.msg || 'Order failed' });
-  }
-};
-
-
 
 
 
