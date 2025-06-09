@@ -91,8 +91,6 @@ const Login = () => {
                 required
               />
             </div>
-            
-            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <button type="submit" className="btn-primary">
               Sign In
