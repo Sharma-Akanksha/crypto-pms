@@ -3,32 +3,35 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaHome, FaChartLine, FaUserCog, FaListAlt } from 'react-icons/fa';
 
+
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://crypto-pms.onrender.com': '';
+
 const Dashboard = () => {
     const [balance, setBalance] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-
+    
     useEffect(() => {
-    const token = localStorage.getItem('pms_token');
+        const token = localStorage.getItem('pms_token');
 
-    if (!token) {
-        navigate('/login');
-        return;
-    }
-
-    axios.get('/api/user/balance', {
-        headers: {
-            Authorization: `Bearer ${token}`
+        if (!token) {
+            navigate('/login');
+            return;
         }
+
+        axios.get(`${BASE_URL}/api/user/balance`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
-        .then((res) => {
-        console.log(res.data);
-        setBalance(res.data?.data);
-        setLoading(false);
+            .then((res) => {
+            console.log(res.data);
+            setBalance(res.data?.data);
+            setLoading(false);
         })
-        .catch((err) => {
-        console.error('Balance fetch error:', err.response?.data || err.message);
-        navigate('/login');
+            .catch((err) => {
+            console.error('Balance fetch error:', err.response?.data || err.message);
+            navigate('/login');
         });
     }, [navigate]);
 
