@@ -40,7 +40,11 @@ const Login = () => {
     // navigate('/dashboard');
     
     try {
-      const res = await axios.post('/api/auth/login', formData);
+      const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://crypto-pms.onrender.com': '';
+
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, formData);
+
+      // const res = await axios.post('/api/auth/login', formData);
       const token = res.data?.data?.token;
 
       if (token) {
