@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -97,8 +96,8 @@ const Login = () => {
             </button>
             
             <div className="login-footer">
-              <p>Don't have an account? <a href="/signup">Sign up</a></p>
-              <p><a href="/forgot-password">Forgot password?</a></p>
+              <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+              <p><Link to="/forgot-password">Forgot password?</Link></p>
             </div>
           </form>
         </div>
