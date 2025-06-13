@@ -142,6 +142,53 @@ exports.updatePassword = async (req, res) => {
   }
 };
 
+exports.getActiveTrades = async (req, res) => {
+  const user = req.user;
+  try {
+    const activeTrades = await Trade.find({ userId: user._id, status: 'active' });
+    res.json({ success: true, data: activeTrades });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error fetching active trades' });
+  }
+};
+
+exports.getLast30DayProfit = async (req, res) => {
+  const user = req.user;
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - 30);
+
+  try {
+    const trades = await Trade.find({ userId: user._id, createdAt: { $gte: fromDate } });
+    const totalProfit = trades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+    res.json({ success: true, data: { totalProfit } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error calculating 30d profit' });
+  }
+};
+
+exports.getProfitLossChartData = async (req, res) => {
+  const user = req.user;
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - 30);
+
+  try {
+    const trades = await Trade.find({ userId: user._id, createdAt: { $gte: fromDate } });
+
+    const chartData = {};
+    trades.forEach((trade) => {
+      const day = trade.createdAt.toISOString().slice(0, 10); // "YYYY-MM-DD"
+      chartData[day] = (chartData[day] || 0) + (trade.pnl || 0);
+    });
+
+    const formattedData = Object.entries(chartData).map(([date, pnl]) => ({ date, pnl }));
+    res.json({ success: true, data: formattedData });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error generating P/L chart' });
+  }
+};
+
+
+
 
 
 

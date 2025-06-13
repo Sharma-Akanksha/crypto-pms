@@ -68,7 +68,8 @@ const SignupForm = () => {
       const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://crypto-pms.onrender.com': '';
 
       await axios.post(`${BASE_URL}/api/auth/register`, formData);
-      
+      console.log(formData);
+
       setSuccess('Account created successfully! Redirecting to login...');
       setTimeout(() => navigate('/login', { state: { successMsg: 'Account created successfully! Please log in.' }}) , 2000); // Redirect after 2s
 

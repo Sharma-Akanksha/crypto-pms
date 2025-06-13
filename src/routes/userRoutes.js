@@ -13,7 +13,9 @@ router.get('/pl', authMiddleware.userAuth, userController.getPLReports);
 router.get('/account', authMiddleware.userAuth, userController.getAccountInfo);
 router.patch('/update-api-keys', authMiddleware.userAuth, userController.updateApiKeys);
 router.patch('/update-password', authMiddleware.userAuth, userController.updatePassword);
-
+router.get('/trades/active', authMiddleware.userAuth, userController.getActiveTrades);
+router.get('/profit/30d', authMiddleware.userAuth, userController.getLast30DayProfit);
+router.get('/pl-chart', authMiddleware.userAuth, userController.getProfitLossChartData);
 
 
 
