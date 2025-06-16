@@ -1,7 +1,9 @@
 const User = require('../models/User');
 const Trade = require('../models/Trade');
 const exchangeService = require('../services/exchangeService');
+const tradeService = require('../services/tradeService');
 const { standardResponse } = require('../utils/apiResponse');
+const { v4: uuidv4 } = require('uuid');
 
 exports.placeTradeOrder = async (req, res) => {
   try {
@@ -10,6 +12,16 @@ exports.placeTradeOrder = async (req, res) => {
     // Validate input
     if (!['buy', 'sell'].includes(orderType)) {
       return res.status(400).json(standardResponse(false, 'Invalid order type'));
+    }
+
+    const estimatedPrice = price || 0.000008;
+    const approxValue = Number(quantity) * estimatedPrice;
+
+    if (approxValue < 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Trade value must be at least 1 USDT to avoid Bitget rejection'
+      });
     }
 
     // Get all active users who have service enabled
@@ -41,6 +53,7 @@ exports.placeTradeOrder = async (req, res) => {
         amount: tradeAmount,
         status: orderResult.success ? 'executed' : 'failed',
         placedAt: new Date(),
+        tradeId: response?.orderId || uuidv4(),
         exchangeOrderId: orderResult.orderId || null,
       });
 
@@ -71,5 +84,43 @@ exports.getAllUsersPL = async (req, res) => {
   } catch (error) {
     console.error('Error fetching P/L:', error);
     return res.status(500).json(standardResponse(false, 'Internal server error'));
+  }
+};
+
+exports.placeCopyTrade = async (req, res) => {
+  try {
+    const { symbol, side, price, quantity } = req.body;
+
+    if (!symbol || !side || !quantity) {
+      return res.status(400).json(standardResponse(false, 'Missing required trade parameters'));
+    }
+
+    // const estimatedPrice = price || 0.000001;
+    // const approxValue = Number(quantity) * estimatedPrice;
+
+    // if (approxValue < 1) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Trade value must be at least 1 USDT to avoid Bitget rejection'
+    //   });
+    // }
+
+    const users = await User.find({ serviceEnabled: true });
+
+    const results = await tradeService.copyTradeToAllUsers({
+      symbol,
+      side,
+      price,
+      quantity,
+      users,
+    });
+
+    return res.json(standardResponse(true, 'Copy trade executed', { results }));
+
+  } catch (error) {
+
+    console.error('Copy trade error:', error);
+    return res.status(500).json(standardResponse(false, 'Server error'));
+
   }
 };

@@ -8,10 +8,12 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.post('/trade', authMiddleware.adminAuth, adminController.placeTradeOrder);
 router.get('/pl', authMiddleware.adminAuth, adminController.getAllUsersPL);
 
-// Example Admin Route
-router.get('/dashboard', (req, res) => {
-  res.json({ success: true, message: 'Admin dashboard accessed' });
-});
+// POST /api/admin/place-copy-trade
+router.post('/place-copy-trade', adminController.placeCopyTrade);
 
+// Example Admin Route
+// router.get('/dashboard', (req, res) => {
+//   res.json({ success: true, message: 'Admin dashboard accessed' });
+// });
 
 module.exports = router;

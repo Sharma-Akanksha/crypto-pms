@@ -23,8 +23,12 @@ const userSchema = new mongoose.Schema({
   bitgetSecretKey: { type: String, required: true },
   bitgetPassphrase: { type: String, required: true },
 
-  otpVerified: { type: Boolean, default: true }, // optional if using OTPs later
-  isAdmin: { type: Boolean, default: false }
+  otpVerified: { type: Boolean, default: true },
+  isAdmin: { type: Boolean, default: false },
+
+  serviceEnabled: { type: Boolean, default: true },
+  tradePercentageLimit: { type: Number, default: 100 }, // value between 0–100
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
+

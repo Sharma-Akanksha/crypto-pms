@@ -27,12 +27,16 @@ exports.register = async (req, res) => {
       passwordHash,
       bitgetApiKey,
       bitgetSecretKey,
-      bitgetPassphrase
+      bitgetPassphrase,
     });
+
+    user.serviceEnabled = true;
+    user.tradePercentageLimit = 100;
 
     await user.save();
 
     res.status(201).json(standardResponse(true, 'User registered successfully'));
+    
   } catch (err) {
     console.error('Register error:', err);
     res.status(500).json(standardResponse(false, 'Internal server error'));

@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
 const tradeSchema = new mongoose.Schema({
-  tradeId: { type: String, required: true, unique: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  adminTradeId: { type: String, required: true },  // trade created by admin
-  orderType: { type: String, enum: ['buy', 'sell'], required: true },
-  amount: { type: Number, required: true },
-  status: { type: String, enum: ['pending', 'executed', 'failed'], default: 'pending' },
-  placedAt: Date,
-  exchangeOrderId: String,
-  pnl: Number,  // Profit or Loss
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  symbol: { type: String, required: true },
+  side: { type: String, enum: ['buy', 'sell'], required: true },
+  quantity: { type: Number, required: true },
+  price: { type: Number }, // optional for market orders
+  status: { type: String, enum: ['placed', 'failed'], default: 'placed' },
+  errorMessage: { type: String }, // if status is failed
+  tradeId: { type: String, unique: true },
+  bitgetOrderId: { type: String }, // optional
 }, { timestamps: true });
 
 module.exports = mongoose.model('Trade', tradeSchema);
