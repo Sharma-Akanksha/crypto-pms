@@ -30,40 +30,39 @@ exports.placeTradeOrder = async (req, res) => {
     // For each user, calculate actual trade amount based on their balance and tradePercentageLimit
     for (const user of users) {
       // Get user balance from exchange via API
-      const balance = await exchangeService.getBalance(user.exchangeDetails);
+      try {
+        const userQty = (Number(quantity) * (user.tradePercentageLimit || 100)) / 100;
+        const response = await placeOrderForUser(user, {
+          symbol,
+          side,
+          type: orderType,
+          price,
+          quantity: userQty
+        });
 
-      const tradeAmount = (balance * user.tradePercentageLimit) / 100;
+        await Trade.create({
+          user: user._id,
+          symbol,
+          side,
+          quantity: userQty,
+          price,
+          status: 'placed',
+          tradeId: response?.orderId || uuidv4(),
+          bitgetOrderId: response?.orderId
+        });
 
-      if (tradeAmount < amount) {
-        // Skip if trade amount less than minimum trade amount defined by admin
-        continue;
+        results.push({ user: user.email, status: 'success', orderId: response?.orderId });
+
+      } catch (err) {
+        results.push({ user: user.email, status: 'failed', error: err.message });
       }
-
-      // Place order on user exchange account
-      const orderResult = await exchangeService.placeOrder(user.exchangeDetails, {
-        orderType,
-        amount: tradeAmount,
-      });
-
-      // Save trade record
-      const trade = new Trade({
-        userId: user._id,
-        adminTradeId: 'adminTrade_' + Date.now(),
-        orderType,
-        amount: tradeAmount,
-        status: orderResult.success ? 'executed' : 'failed',
-        placedAt: new Date(),
-        tradeId: response?.orderId || uuidv4(),
-        exchangeOrderId: orderResult.orderId || null,
-      });
-
-      await trade.save();
     }
 
-    return res.json(standardResponse(true, 'Trade orders placed successfully'));
+    res.json({ success: true, message: 'Copy trade executed', data: { results } });
+
   } catch (error) {
-    console.error('Error placing trade:', error);
-    return res.status(500).json(standardResponse(false, 'Internal server error'));
+    console.error('Copy trade error:', err);
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 

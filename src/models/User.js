@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   bitgetPassphrase: { type: String, required: true },
 
   otpVerified: { type: Boolean, default: true },
-  isAdmin: { type: Boolean, default: false },
+  // isAdmin: { type: Boolean, default: false },
 
   serviceEnabled: { type: Boolean, default: true },
   tradePercentageLimit: { type: Number, default: 100 }, // value between 0–100
