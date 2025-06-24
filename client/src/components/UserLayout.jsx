@@ -12,17 +12,17 @@ const UserLayout = () => {
       <aside className="user-sidebar">
         <div className="user-sidebar-title">📊 PMS User</div>
         <ul className="user-nav-menu">
-          <li className={isActive('/user/home') ? 'active' : ''}>
-           <label><Link to="/user/home"><FaHome className="icon" /> Home</Link></label> 
+          <li className={isActive('/home') ? 'active' : ''}>
+           <label><Link to="/home"><FaHome className="icon" /> Home</Link></label> 
           </li>
-          <li className={isActive('/user/trade-settings') ? 'active' : ''}>
-            <Link to="/user/trade-settings"><FaChartLine className="icon" /> Trade Settings</Link>
+          <li className={isActive('/trade-settings') ? 'active' : ''}>
+            <Link to="/trade-settings"><FaChartLine className="icon" /> Trade Settings</Link>
           </li>
-          <li className={isActive('/user/account-management') ? 'active' : ''}>
-            <Link to="/user/account-management"><FaUserCog className="icon" /> Account Management</Link>
+          <li className={isActive('/account-management') ? 'active' : ''}>
+            <Link to="/account-management"><FaUserCog className="icon" /> Account Management</Link>
           </li>
-          <li className={isActive('/user/transaction-history') ? 'active' : ''}>
-            <Link to="/user/transaction-history"><FaListAlt className="icon" /> Transaction History</Link>
+          <li className={isActive('/transaction-history') ? 'active' : ''}>
+            <Link to="/transaction-history"><FaListAlt className="icon" /> Transaction History</Link>
           </li>
         </ul>
       </aside>

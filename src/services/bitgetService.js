@@ -25,19 +25,41 @@ exports.placeOrderForUser = async (user, orderData) => {
     const url = 'https://api.bitget.com' + endpoint;
 
     console.log('🚀 Placing order for user:', user.email);
-
+    console.log("order", orderData, orderData.orderType);
     try {
         const payload = {
             symbol: orderData.symbol,
             side: orderData.side,
-            orderType: orderData.type,
+            orderType: orderData.orderType,
             force: 'gtc',
-            size: orderData.quantity.toString()
+            // size: orderData.quantity.toString()
         };
 
-        if (orderData.type === 'limit') {
-            payload.price = orderData.price;
+        // 🔁 Handle market buy/sell correctly
+        if (orderData.orderType === 'market') {
+            if (orderData.side === 'buy') {
+                if (!orderData.notional) throw new Error("Missing notional for market buy");
+                payload.notional = orderData.notional.toString();
+                payload.size = payload.notional;
+            } else if (orderData.side === 'sell') {
+                if (!orderData.size) throw new Error("Missing quantity for market sell");
+                payload.size = orderData.size.toString();
+            }
         }
+        
+        // if (orderData.type === 'limit') {
+        //     payload.price = orderData.price;
+        // }
+
+        // 🔁 For limit orders
+        if (orderData.orderType === 'limit') {
+            if (!orderData.quantity || !orderData.price) {
+                throw new Error("Limit order must have price and quantity");
+            }
+            payload.price = orderData.price.toString();
+            payload.size = orderData.quantity.toString();
+        }
+
 
         const body = JSON.stringify(payload);
 

@@ -3,6 +3,7 @@
 const axios = require('axios');
 const CryptoJS = require('crypto-js');
 
+
 const getBitgetHeaders = (apiKey, secretKey, passphrase, method, endpoint, body = '') => {
   const timestamp = Date.now().toString();
   const preHash = timestamp + method + endpoint + body;
@@ -38,23 +39,28 @@ exports.getBalance = async (user) => {
   return response.data;
 };
 
+exports.getFinalBalanceFromBitget = async (user) => {
+  const response = await exports.getBalance(user);
+  const balances = response?.data || [];
 
-// async function placeOrder(exchangeDetails, { orderType, amount }) {
-//   // call exchange API to place buy/sell order
-//   // return { success: true, orderId: 'abc123' } or { success: false, error: '...' }
+  return balances.reduce((acc, coin) => {
+    acc[coin.coinName] = parseFloat(coin.available || '0');
+    return acc;
+  }, {});
+};
 
-//   // Example stub:
-//   return { success: true, orderId: 'order_' + Date.now() };
-// }
 
-// async function getOrderStatus(exchangeDetails, orderIds) {
-//   // bulk get order status from exchange
+exports.getMarketPrice = async (symbol) => {
+  
+  try {
+    const response = await axios.get(
+      `https://api.bitget.com/api/v2/spot/market/tickers?symbol=${symbol}`
+    );
+    return parseFloat(response.data?.data?.[0]?.lastPr || 0);
+  } catch (err) {
+    console.error('❌ Error getting market price:', err.message);
+    return 0;
+  }
+};
 
-//   // Example stub:
-//   return orderIds.map((id) => ({ orderId: id, status: 'executed' }));
-// }
 
-// module.exports = {
-//   placeOrder,
-//   getOrderStatus,
-// };
