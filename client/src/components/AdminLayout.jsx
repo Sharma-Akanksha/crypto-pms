@@ -1,17 +1,22 @@
 // AdminLayout.jsx
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FiHome, FiTrendingUp, FiUsers, FiBarChart2 } from 'react-icons/fi';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FiHome, FiTrendingUp, FiUsers, FiBarChart2, FiLogOut } from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Dashboard', icon: <FiHome />, path: '/admin-dashboard' },
+    { label: 'Dashboard', icon: <FiHome />, path: '/dashboard' },
     { label: 'Trade Management', icon: <FiTrendingUp />, path: '/trade-management' },
-    // { label: 'User Portfolio', icon: <FiUsers />, path: '/admin/user-portfolio' },
-    // { label: 'Reports & Analytics', icon: <FiBarChart2 />, path: '/admin/reports' }
+    // Add more as needed
   ];
+
+  const handleLogout = () => {
+    // Optional: clear session/localStorage here
+    navigate('/admin-login');
+  };
 
   return (
     <div className="admin-dashboard">
@@ -29,8 +34,17 @@ const AdminLayout = ({ children }) => {
               </Link>
             </li>
           ))}
+
+          {/* Logout Option */}
+          <li onClick={handleLogout} className="logout-button">
+            <div className="nav-link">
+              <FiLogOut className="icon" />
+              <span>Logout</span>
+            </div>
+          </li>
         </ul>
       </aside>
+
       <main className="main-content">
         {children}
       </main>
