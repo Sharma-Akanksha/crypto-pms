@@ -783,3 +783,77 @@ body {
   color: #94a3b8;
   font-size: 1rem;
 }
+
+/* User Transaction History */
+.user-transactions-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.user-transaction-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  overflow-x: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.user-transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.user-transaction-table th,
+.user-transaction-table td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.user-transaction-table th {
+  color: #1e293b;
+}
+
+.neutral-text {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.buy-text {
+  color: rgb(3, 172, 3);
+  font-weight: 600;
+}
+
+.sell-text {
+  color: red;
+  font-weight: 600;
+}
+
+.profit-text {
+  color: rgb(3, 172, 3);
+  font-weight: 600;
+}
+
+.loss-text {
+  color: red;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-block;
+}
+
+.status-badge.success {
+  background-color: #d1fadf;
+  color: #15803d;
+}
+
+.status-badge.failed {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
