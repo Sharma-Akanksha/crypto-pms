@@ -77,3 +77,22 @@ exports.login = async (req, res) => {
     res.status(500).json(standardResponse(false, 'Internal server error'));
   }
 };
+
+exports.userAuth = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(401).json({ success: false, message: 'User not found' });
+
+    req.user = user; // 👈 This is important!
+    next();
+  } catch (err) {
+    console.error('Auth error:', err.message);
+    return res.status(401).json({ success: false, message: 'Invalid token' });
+  }
+};

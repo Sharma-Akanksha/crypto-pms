@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { FaHome, FaChartLine, FaUserCog, FaListAlt } from 'react-icons/fa';
 
-const UserLayout = () => {
+const UserLayout = ({ children }) => {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -11,9 +11,9 @@ const UserLayout = () => {
     <div className="user-dashboard">
       <aside className="user-sidebar">
         <div className="user-sidebar-title">📊 PMS User</div>
-        <ul className="user-nav-menu">
-          <li className={isActive('/home') ? 'active' : ''}>
-           <label><Link to="/home"><FaHome className="icon" /> Home</Link></label> 
+        <ul className="user-nav-menu one">
+          <li className={isActive('/dashboard') ? 'active' : ''}>
+           <label><Link to="/dashboard"><FaHome className="icon" /> Home</Link></label> 
           </li>
           <li className={isActive('/trade-settings') ? 'active' : ''}>
             <Link to="/trade-settings"><FaChartLine className="icon" /> Trade Settings</Link>
@@ -28,7 +28,7 @@ const UserLayout = () => {
       </aside>
 
       <main className="user-main-content">
-        <Outlet /> {/* This is where child components render */}
+       { children }
       </main>
     </div>
   );
