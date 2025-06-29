@@ -10,6 +10,7 @@ const AdminLayout = ({ children }) => {
   const navItems = [
     { label: 'Dashboard', icon: <FiHome />, path: '/dashboard' },
     { label: 'Trade Management', icon: <FiTrendingUp />, path: '/trade-management' },
+    { label: 'Reports & Analytics', icon: <FiBarChart2 />, path: '/reports-analytics' }
     // Add more as needed
   ];
 
