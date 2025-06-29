@@ -2,13 +2,14 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiTrendingUp, FiUsers, FiBarChart2, FiLogOut } from 'react-icons/fi';
+import { logoutUser } from '../utils/logout';
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Dashboard', icon: <FiHome />, path: '/dashboard' },
+    { label: 'Dashboard', icon: <FiHome />, path: '/admin-dashboard' },
     { label: 'Trade Management', icon: <FiTrendingUp />, path: '/trade-management' },
     { label: 'Reports & Analytics', icon: <FiBarChart2 />, path: '/reports-analytics' }
     // Add more as needed
@@ -16,7 +17,7 @@ const AdminLayout = ({ children }) => {
 
   const handleLogout = () => {
     // Optional: clear session/localStorage here
-    navigate('/admin-login');
+    logoutUser(navigate, true);
   };
 
   return (

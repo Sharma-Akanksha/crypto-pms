@@ -19,6 +19,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/dashboard', authMiddleware.userAuth, userController.getUserDashboardStats);
 router.get('/settings', authMiddleware.userAuth, userController.getUserSettings);
 router.put('/settings', authMiddleware.userAuth, userController.updateUserSettings);
+router.get('/trades/history', authMiddleware.userAuth, userController.getUserTradeHistory);
 
 
 

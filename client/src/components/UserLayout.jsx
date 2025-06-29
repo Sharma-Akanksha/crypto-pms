@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaChartLine, FaUserCog, FaListAlt, FaSignOutAlt } from 'react-icons/fa';
+import { logoutUser } from '../utils/logout';
 
 const UserLayout = ({ children }) => {
   const location = useLocation();
@@ -9,8 +10,8 @@ const UserLayout = ({ children }) => {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    // Optional: Clear local/session storage here
-    navigate('/login');
+    // Optional: clear session/localStorage here
+    logoutUser(navigate, false);
   };
 
   return (
@@ -25,9 +26,9 @@ const UserLayout = ({ children }) => {
           <li className={isActive('/trade-settings') ? 'active' : ''}>
             <Link to="/trade-settings"><FaChartLine className="icon" /> Trade Settings</Link>
           </li>
-          <li className={isActive('account-management') ? 'active' : ''}>
+          {/* <li className={isActive('account-management') ? 'active' : ''}>
             <Link to="/account-management"><FaUserCog className="icon" /> Account Management</Link>
-          </li>
+          </li> */}
           <li className={isActive('/transaction-history') ? 'active' : ''}>
             <Link to="/transaction-history"><FaListAlt className="icon" /> Transaction History</Link>
           </li>

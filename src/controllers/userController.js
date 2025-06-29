@@ -312,17 +312,17 @@ exports.getUserDashboardStats = async (req, res) => {
         const totalBuyQty = userTrades.reduce((sum, t) => sum + t.quantity, 0);
         const totalBuyCost = userTrades.reduce((sum, t) => sum + t.quantity * t.price, 0);
 
-        console.log(userTrades, totalBuyQty, totalBuyCost);
+        // console.log(userTrades, totalBuyQty, totalBuyCost);
         if (totalBuyQty === 0) continue;
 
         const avgBuyPrice = totalBuyCost / totalBuyQty;
         const currentMarketPrice = await getMarketPrice(symbol);
-        console.log("market", currentMarketPrice);
+        // console.log("market", currentMarketPrice);
         unrealizedProfit += (currentMarketPrice - avgBuyPrice) * netQty;
       }
     }
 
-    console.log(usdtBalance, activeTradeCount, totalProfit, unrealizedProfit, totalProfit + unrealizedProfit);
+    // console.log(usdtBalance, activeTradeCount, totalProfit, unrealizedProfit, totalProfit + unrealizedProfit);
     return res.json({
       success: true,
       data: {
@@ -463,12 +463,66 @@ exports.updateUserSettings = async (req, res) => {
       { new: true }
     );
 
+    
+
     res.json({ success: true, message: 'Settings updated', data: user });
   } catch (err) {
     console.error('Update settings error:', err);
     res.status(500).json({ success: false, message: 'Failed to update settings' });
   }
 };
+
+exports.getUserTradeHistory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // Fetch all trades sorted by creation time (FIFO)
+    const trades = await Trade.find({ user: userId }).sort({ createdAt: 1 });
+
+    const buyQueue = {}; // { symbol: [{ price, quantity }] }
+    const result = [];
+
+    for (const trade of trades) {
+      const { symbol, side, price, quantity, status, createdAt } = trade;
+      let pnl = 0;
+      
+      if (!buyQueue[symbol]) buyQueue[symbol] = [];
+
+      if (side === 'buy') {
+       
+        buyQueue[symbol].push({ price, quantity });
+      } else if (side === 'sell') {
+        
+        let remaining = quantity;
+        
+        while (remaining > 0 && buyQueue[symbol].length > 0) {
+          const buy = buyQueue[symbol][0];
+          const matchedQty = Math.min(buy.quantity, remaining);
+          pnl += (price - buy.price) * matchedQty;
+          buy.quantity -= matchedQty;
+          remaining -= matchedQty;
+          if (buy.quantity <= 0) buyQueue[symbol].shift();
+        }
+      }
+
+      result.push({
+        date: createdAt.toISOString().split('T')[0],
+        pair: symbol,
+        type: side,
+        amount: quantity,
+        profitLoss: side === 'sell' ? `$${pnl.toFixed(2)}` : '-',
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+      });
+    }
+
+    return res.json({ success: true, data: result });
+
+  } catch (error) {
+    console.error('Trade history fetch error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch trade history' });
+  }
+};
+
 
 
 
