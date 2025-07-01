@@ -447,7 +447,7 @@ body {
 .user-main-content {
   flex: 1;
   padding: 30px;
-  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, #9791e1 0%, #e5d3ff 100%);
   color: white;
 }
 
@@ -853,7 +853,85 @@ body {
   color: #15803d;
 }
 
+.status-badge.placed {
+  background-color: #d1fadf;
+  color: #15803d;
+}
+
 .status-badge.failed {
   background-color: #fee2e2;
   color: #b91c1c;
 }
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.pagination-controls button {
+  padding: 8px 20px;
+  font-size: 14px;
+  background: linear-gradient(to right, #6c63ff, #7858ff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.pagination-controls button:hover {
+  background: linear-gradient(to right, #5846e6, #6742e3);
+  transform: scale(1.05);
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.download-button {
+  background-color: #00b386;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #000;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.report-table th,
+.report-table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.report-table thead {
+  background-color: #f4f6fb;
+  font-weight: bold;
+  color: #333;
+}
+
+.report-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+
+

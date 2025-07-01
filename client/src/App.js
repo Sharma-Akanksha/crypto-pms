@@ -10,6 +10,7 @@ import AdminReg from './pages/AdminReg';
 import AdminLogin from './pages/AdminLogin';
 import TradeManagement from './pages/TradeManagement';
 import ReportsAnalytics from './pages/ReportsAnalytics';
+import UserReport from './pages/UserReport';
 import TransactionHistory from './pages/TransactionHistory';
 // import UserLayout from './components/UserLayout'; 
 // import AdminLayout from './components/AdminLayout'; 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/reports-analytics" element={<ReportsAnalytics />} />
           <Route path="transaction-history" element={<TransactionHistory />} />
           <Route path="/trade-settings" element={<TradeSettings />} />
+          <Route path="report" element={<UserReport />} />
           <Route path="dashboard"
             element={
               <ProtectedRoute>

@@ -7,9 +7,12 @@ const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://crypto-pms.onrender.com'
   : '';
 
+const ITEMS_PER_PAGE = 10;
+
 const TransactionHistory = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const token = localStorage.getItem('pms_token');
   const headers = { Authorization: `Bearer ${token}` };
@@ -23,6 +26,23 @@ const TransactionHistory = () => {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  console.log(transactions);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(transactions.length / ITEMS_PER_PAGE);
+  const paginatedTx = transactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  console.log("paginatedTx", totalPages);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <UserLayout>
@@ -50,7 +70,7 @@ const TransactionHistory = () => {
                     <td colSpan="6" className="neutral-text">No transactions found.</td>
                   </tr>
                 ) : (
-                  transactions.map((tx, index) => (
+                  paginatedTx.map((tx, index) => (
                     <tr key={index}>
                     <td className="neutral-text">
                       {tx.date ? new Date(tx.date).toLocaleDateString() : '-'}
@@ -65,7 +85,7 @@ const TransactionHistory = () => {
                     </td>
                     <td>
                       <span className={`status-badge ${tx.status?.toLowerCase()}`}>
-                        {tx.status || '-'}
+                        {tx.status === "Placed" ? "Success": "Failed" || '-'}
                       </span>
                     </td>
                   </tr>
@@ -73,6 +93,16 @@ const TransactionHistory = () => {
                 )}
               </tbody>
             </table>
+            {/* Pagination Controls */}
+            <div className="pagination-controls">
+              <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+                ◀ Prev
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                Next ▶
+              </button>
+            </div>
           </div>
         )}
       </main>

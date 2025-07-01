@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaChartLine, FaUserCog, FaListAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaChartLine, FaUserCog, FaListAlt, FaSignOutAlt, FaReceipt } from 'react-icons/fa';
 import { logoutUser } from '../utils/logout';
 
 const UserLayout = ({ children }) => {
@@ -31,6 +31,9 @@ const UserLayout = ({ children }) => {
           </li> */}
           <li className={isActive('/transaction-history') ? 'active' : ''}>
             <Link to="/transaction-history"><FaListAlt className="icon" /> Transaction History</Link>
+          </li>
+          <li className={isActive('/report') ? 'active' : ''}>
+            <Link to="/report"><FaReceipt className="icon" /> Report</Link>
           </li>
 
           {/* Logout button */}

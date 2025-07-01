@@ -20,6 +20,7 @@ router.get('/dashboard', authMiddleware.userAuth, userController.getUserDashboar
 router.get('/settings', authMiddleware.userAuth, userController.getUserSettings);
 router.put('/settings', authMiddleware.userAuth, userController.updateUserSettings);
 router.get('/trades/history', authMiddleware.userAuth, userController.getUserTradeHistory);
+router.get('/report', authMiddleware.userAuth, userController.getUserReport);
 
 
 

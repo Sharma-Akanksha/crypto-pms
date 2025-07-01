@@ -524,6 +524,194 @@ exports.getUserTradeHistory = async (req, res) => {
 };
 
 
+// exports.getUserReport = async (req, res) => {
+//   try {
+//     const user = req.user;
+//     const range = req.query.selectRange || 'daily';
+
+//     let fromDate = new Date();
+//     if (range === 'weekly') fromDate.setDate(fromDate.getDate() - 7);
+//     else if (range === 'monthly') fromDate.setMonth(fromDate.getMonth() - 1);
+//     else fromDate.setDate(fromDate.getDate() - 1);
+
+//     console.log("date", fromDate);
+//     const trades = await Trade.find({
+//       user: user._id,
+//       createdAt: { $gte: fromDate },
+//       status: 'placed',
+//     }).sort({ createdAt: 1 });
+
+//     console.log("trade", trades);
+
+//     const summary = {};
+
+//     for (const trade of trades) {
+//       const { symbol, side, quantity, price, createdAt } = trade;
+
+//       if (!summary[symbol]) {
+//         summary[symbol] = {
+//           symbol,
+//           totalBuy: 0,
+//           totalSell: 0,
+//           buyRecords: [],
+//           realizedPnL: 0,
+//           createdAt,
+//         };
+//       }
+
+//       const sym = summary[symbol];
+
+//       if (side === 'buy') {
+//         sym.totalBuy += quantity;
+//         sym.buyRecords.push({ quantity, price });
+//       } else if (side === 'sell') {
+//         sym.totalSell += quantity;
+//         let sellQty = quantity;
+
+//         while (sellQty > 0 && sym.buyRecords.length > 0) {
+//           const buy = sym.buyRecords[0];
+//           const matchedQty = Math.min(sellQty, buy.quantity);
+//           sym.realizedPnL += (price - buy.price) * matchedQty;
+
+//           buy.quantity -= matchedQty;
+//           sellQty -= matchedQty;
+
+//           if (buy.quantity <= 0) sym.buyRecords.shift();
+//         }
+//       }
+//     }
+
+//     // Get unrealized PnL using live market price
+//     const finalData = [];
+//     for (const sym in summary) {
+//       const data = summary[sym];
+//       const currentPrice = await getMarketPrice(sym);
+//       let unrealized = 0;
+//       let totalQty = 0;
+//       let totalCost = 0;
+
+//       for (const buy of data.buyRecords) {
+//         unrealized += (currentPrice - buy.price) * buy.quantity;
+//         totalCost += buy.price * buy.quantity;
+//         totalQty += buy.quantity;
+//       }
+
+//       finalData.push({
+//         symbol: sym,
+//         totalBuy: data.totalBuy,
+//         totalSell: data.totalSell,
+//         avgBuyPrice: totalQty ? totalCost / totalQty : 0,
+//         realizedPnL: data.realizedPnL,
+//         unrealizedPnL: totalQty > 0 ? unrealized : 0,
+//         createdAt: data.createdAt.toISOString().split('T')[0],
+//       });
+//     }
+
+//     return res.json({ success: true, data: finalData });
+
+//   } catch (err) {
+//     console.error('User Report Error:', err.message);
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Failed to fetch report',
+//       error: err.message
+//     });
+//   }
+// };
+
+
+exports.getUserReport = async (req, res) => {
+  try {
+    const user = req.user;
+    const range = req.query.selectRange || 'daily';
+
+    let fromDate = new Date();
+    if (range === 'weekly') fromDate.setDate(fromDate.getDate() - 7);
+    else if (range === 'monthly') fromDate.setMonth(fromDate.getMonth() - 1);
+    else fromDate.setDate(fromDate.getDate() - 1);
+
+    const trades = await Trade.find({
+      user: user._id,
+      createdAt: { $gte: fromDate },
+      status: 'placed',
+    }).sort({ createdAt: 1 });
+
+    const summary = {};
+
+    for (const trade of trades) {
+      const { symbol, side, quantity, price, createdAt } = trade;
+
+      if (!summary[symbol]) {
+        summary[symbol] = {
+          symbol,
+          totalBuy: 0,
+          totalSell: 0,
+          buyRecords: [],
+          realizedPnL: 0,
+          purchaseDate: createdAt,
+        };
+      }
+
+      const sym = summary[symbol];
+
+      if (side === 'buy') {
+        sym.totalBuy += quantity;
+        sym.buyRecords.push({ quantity, price });
+      } else if (side === 'sell') {
+        sym.totalSell += quantity;
+        let sellQty = quantity;
+
+        while (sellQty > 0 && sym.buyRecords.length > 0) {
+          const buy = sym.buyRecords[0];
+          const matchedQty = Math.min(sellQty, buy.quantity);
+          sym.realizedPnL += (price - buy.price) * matchedQty;
+
+          buy.quantity -= matchedQty;
+          sellQty -= matchedQty;
+
+          if (buy.quantity <= 0) sym.buyRecords.shift();
+        }
+      }
+    }
+
+    const finalData = [];
+    for (const sym in summary) {
+      const data = summary[sym];
+      const currentPrice = await getMarketPrice(sym);
+      let unrealized = 0, totalQty = 0, totalCost = 0;
+
+      for (const buy of data.buyRecords) {
+        unrealized += (currentPrice - buy.price) * buy.quantity;
+        totalCost += buy.price * buy.quantity;
+        totalQty += buy.quantity;
+      }
+
+      finalData.push({
+        symbol: sym,
+        totalBuy: data.totalBuy,
+        totalSell: data.totalSell,
+        avgBuyPrice: totalQty ? totalCost / totalQty : 0,
+        realizedPnL: data.realizedPnL,
+        unrealizedPnL: totalQty > 0 ? unrealized : 0,
+        purchaseDate: data.purchaseDate.toISOString().split('T')[0],
+        currentValue: (totalQty * currentPrice)
+      });
+    }
+
+    return res.json({ success: true, data: finalData });
+
+  } catch (err) {
+    console.error('User Report Error:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch report',
+      error: err.message
+    });
+  }
+};
+
+
+
 
 
 
