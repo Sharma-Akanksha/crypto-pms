@@ -34,7 +34,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    toast.success('Login Successfully');
+    
     console.log('Login submitted:', formData);
     // Add your authentication logic here
     // On successful login:
@@ -51,6 +51,7 @@ const Login = () => {
       if (token) {
 
         localStorage.setItem('pms_admin_token', token);
+        toast.success('Login Successfully');
         navigate('/admin-dashboard');
       } else {
         console.log("else block");

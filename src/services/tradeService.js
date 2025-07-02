@@ -27,11 +27,22 @@ exports.copyTradeToAllUsers = async ({ symbol, side, price, quantity, users }) =
 
             const spendableUSDT = (usdtBalance * (user.tradePercentageLimit || 100)) / 100;
             const estimatedQty = Math.floor((spendableUSDT / marketPrice) * 1e6) / 1e6;
-            console.log("spendableUSDT",spendableUSDT, spendableUSDT.toFixed(6));
+            // console.log("spendableUSDT",spendableUSDT, spendableUSDT.toFixed(6), estimatedQty);
             if (side === 'buy') {
-                // Calculate how much USDT will be used
                 if (isNaN(spendableUSDT) || spendableUSDT < 1) {
                     results.push({ user: user.email, status: 'skipped', reason: 'Less than 1 USDT available' });
+                    continue;
+                }
+
+                const tradeNotional = quantity * marketPrice;
+                // console.log("tradeNotional", tradeNotional);
+
+                if (tradeNotional > spendableUSDT) {
+                    results.push({
+                    user: user.email,
+                    status: 'skipped',
+                    reason: `Trade notional ($${tradeNotional.toFixed(6)}) exceeds spendable USDT (${spendableUSDT.toFixed(6)})`,
+                    });
                     continue;
                 }
 
@@ -40,8 +51,7 @@ exports.copyTradeToAllUsers = async ({ symbol, side, price, quantity, users }) =
                     side,
                     orderType: 'market',
                     force: 'gtc',
-                    notional: spendableUSDT.toFixed(6), // 💡 Use notional for market buy
-                    size: estimatedQty.toString(),
+                    notional: tradeNotional.toFixed(6),
                 };
 
                 const response = await bitgetService.placeOrderForUser(user, orderPayload);
@@ -50,7 +60,7 @@ exports.copyTradeToAllUsers = async ({ symbol, side, price, quantity, users }) =
                     user: user._id,
                     symbol,
                     side,
-                    quantity: estimatedQty, // Saved for reference
+                    quantity, // Save original requested quantity
                     price: marketPrice,
                     status: 'placed',
                     tradeId: response?.orderId || uuidv4(),

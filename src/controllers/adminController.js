@@ -128,6 +128,7 @@ exports.placeCopyTrade = async (req, res) => {
       return res.status(400).json(standardResponse(false, 'Missing required trade parameters'));
     }
 
+    console.log("quantity", quantity, side);
 
     const users = await User.find({ serviceEnabled: true });
 
@@ -139,8 +140,14 @@ exports.placeCopyTrade = async (req, res) => {
       users,
     });
 
-    console.log("res", results);
-    return res.json(standardResponse(true, 'Copy trade executed', { results }));
+    console.log("res", results, results[0].status);
+    if(results && results[0].status == 'skipped'){
+      console.log("if");
+      return res.status(500).json(standardResponse(true, `Balance is ${results[0].reason}` , { results }));
+    }else{
+      return res.json(standardResponse(true, 'Copy trade executed', { results }));
+    }
+    
 
   } catch (error) {
 
