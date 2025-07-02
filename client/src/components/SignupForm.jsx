@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 
@@ -33,32 +34,33 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    // setError('');
+    // setSuccess('');
     
     // Submit to backend
     if (!formData.email || !emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
+      // setError('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return;
     }
 
     if (!formData.mobile || !mobileRegex.test(formData.mobile)) {
-      setError('Please enter a valid 10-digit mobile number');
+      toast.error('Please enter a valid 10-digit mobile number');
       return;
     }
 
     if (!formData.password || formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
     if (!formData.bitgetApiKey || !formData.bitgetSecretKey || !formData.bitgetPassphrase) {
-      setError('Please fill in all Bitget API fields');
+      toast.error('Please fill in all Bitget API fields');
       return;
     }
 
     if (!formData.acceptTerms) {
-      setError('Please accept the Terms and Conditions');
+      toast.error('Please accept the Terms and Conditions');
       return;
     }
     console.log('Form submitted:', formData);
@@ -70,13 +72,13 @@ const SignupForm = () => {
       await axios.post(`${BASE_URL}/api/auth/register`, formData);
       console.log(formData);
 
-      setSuccess('Account created successfully! Redirecting to login...');
+      toast.success('Account created successfully! Redirecting to login...');
       setTimeout(() => navigate('/login', { state: { successMsg: 'Account created successfully! Please log in.' }}) , 2000); // Redirect after 2s
 
     } catch (err) {
 
       const msg = err.response?.data?.message || 'Registration failed';
-      setError(msg);
+      toast.error(msg);
 
     }
 

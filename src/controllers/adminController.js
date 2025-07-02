@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const Trade = require('../models/Trade');
 const tradeService = require('../services/tradeService');
-const { getFinalBalanceFromBitget } = require('../services/exchangeService');
+const { getFinalBalanceFromBitget, getBalance, getMarketPrice } = require('../services/exchangeService');
 const { standardResponse } = require('../utils/apiResponse');
 const { v4: uuidv4 } = require('uuid');
 
@@ -149,3 +149,96 @@ exports.placeCopyTrade = async (req, res) => {
 
   }
 };
+
+exports.getAdminReport = async (req, res) => {
+  try {
+    const range = req.query.selectRange || 'daily';
+
+    let fromDate = new Date();
+    if (range === 'weekly') fromDate.setDate(fromDate.getDate() - 7);
+    else if (range === 'monthly') fromDate.setMonth(fromDate.getMonth() - 1);
+    else fromDate.setDate(fromDate.getDate() - 1);
+
+    const users = await User.find({ serviceEnabled: true });
+    const allData = [];
+
+    for (const user of users) {
+      const trades = await Trade.find({
+        user: user._id,
+        createdAt: { $gte: fromDate },
+        status: 'placed',
+      }).sort({ createdAt: 1 });
+
+      const summary = {};
+
+      for (const trade of trades) {
+        const { symbol, side, quantity, price, createdAt } = trade;
+
+        if (!summary[symbol]) {
+          summary[symbol] = {
+            symbol,
+            totalBuy: 0,
+            totalSell: 0,
+            buyRecords: [],
+            realizedPnL: 0,
+            createdAt,
+          };
+        }
+
+        const sym = summary[symbol];
+
+        if (side === 'buy') {
+          sym.totalBuy += quantity;
+          sym.buyRecords.push({ quantity, price });
+        } else if (side === 'sell') {
+          sym.totalSell += quantity;
+          let sellQty = quantity;
+
+          while (sellQty > 0 && sym.buyRecords.length > 0) {
+            const buy = sym.buyRecords[0];
+            const matchedQty = Math.min(sellQty, buy.quantity);
+            sym.realizedPnL += (price - buy.price) * matchedQty;
+
+            buy.quantity -= matchedQty;
+            sellQty -= matchedQty;
+
+            if (buy.quantity <= 0) sym.buyRecords.shift();
+          }
+        }
+      }
+
+      for (const symbol in summary) {
+        const data = summary[symbol];
+        const currentPrice = await getMarketPrice(symbol);
+        let unrealized = 0;
+        let totalQty = 0;
+        let totalCost = 0;
+
+        for (const buy of data.buyRecords) {
+          unrealized += (currentPrice - buy.price) * buy.quantity;
+          totalCost += buy.price * buy.quantity;
+          totalQty += buy.quantity;
+        }
+
+        allData.push({
+          userEmail: user.email,
+          symbol,
+          totalBuy: data.totalBuy,
+          totalSell: data.totalSell,
+          avgBuyPrice: totalQty ? totalCost / totalQty : 0,
+          realizedPnL: data.realizedPnL,
+          unrealizedPnL: totalQty > 0 ? unrealized : 0,
+          purchaseDate: data.createdAt.toISOString().split('T')[0],
+          currentValue: currentPrice,
+        });
+      }
+    }
+
+    return res.json({ success: true, data: allData });
+
+  } catch (err) {
+    console.error('Admin Report Error:', err.message);
+    return res.status(500).json({ success: false, message: 'Failed to fetch admin report' });
+  }
+};
+

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { toast } from 'react-toastify';
 import UserLayout from '../components/UserLayout';
 
 const BASE_URL = process.env.NODE_ENV === 'production'
@@ -10,7 +11,7 @@ const BASE_URL = process.env.NODE_ENV === 'production'
 
 const Report = () => {
   const [reportData, setReportData] = useState([]);
-  const [selectedRange, setSelectedRange] = useState('daily');
+  const [selectedRange, setSelectedRange] = useState('weekly');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const Report = () => {
         setReportData(res.data?.data || []);
       } catch (err) {
         console.error('❌ Error fetching report:', err.message);
+        toast.error('Report Failed!');
       } finally {
         setLoading(false);
       }
@@ -61,6 +63,7 @@ const Report = () => {
     });
 
     doc.save('Quantum_Edge_Report.pdf');
+    toast.success('PDF has generated successfully');
   };
 
   const downloadCSV = () => {
@@ -82,6 +85,7 @@ const Report = () => {
     a.href = url;
     a.download = 'Quantum_Edge_Report.csv';
     a.click();
+    toast.success('CSV has generated successfully');
   };
 
   return (

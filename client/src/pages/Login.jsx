@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 
@@ -34,6 +35,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    toast.success('Login Successfully');
     console.log('Login submitted:', formData);
     // authentication logic here
     // On successful login:
@@ -51,13 +53,13 @@ const Login = () => {
         localStorage.setItem('pms_token', token);
         navigate('/dashboard');
       } else {
-        setError('Login failed. Please try again.');
+        toast.error('Login failed. Please try again.');
       }
 
     } catch (err) {
       
       console.error('Login error:', err.response?.data || err.message);
-      setError(err.response?.data?.message || 'Login failed.');
+      toast.error(err.response?.data?.message || 'Login failed.');
     }
   };
 

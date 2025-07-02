@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserLayout from '../components/UserLayout';
+import { toast } from 'react-toastify';
 import '../App.css';
 
 const BASE_URL = process.env.NODE_ENV === 'production'
@@ -23,11 +24,12 @@ const TransactionHistory = () => {
       .then((res) => setTransactions(res.data?.data || []))
       .catch((err) => {
         console.error('Error fetching transaction history:', err.message);
+        toast.error('Transaction History Failed!');
       })
       .finally(() => setLoading(false));
   }, []);
 
-  console.log(transactions);
+  // console.log(transactions);
 
   // Pagination Logic
   const totalPages = Math.ceil(transactions.length / ITEMS_PER_PAGE);
@@ -36,7 +38,7 @@ const TransactionHistory = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  console.log("paginatedTx", totalPages);
+  // console.log("paginatedTx", totalPages);
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {

@@ -11,10 +11,13 @@ import AdminLogin from './pages/AdminLogin';
 import TradeManagement from './pages/TradeManagement';
 import ReportsAnalytics from './pages/ReportsAnalytics';
 import UserReport from './pages/UserReport';
+import AdminReport from './pages/AdminReport';
 import TransactionHistory from './pages/TransactionHistory';
 // import UserLayout from './components/UserLayout'; 
 // import AdminLayout from './components/AdminLayout'; 
 import ProtectedRoute from './components/ProtectedRoute';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 
@@ -22,6 +25,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar newestOnTop />
         <Routes>
           {/* <AppWrapper /> */}
           <Route path="signup" element={<Signup />} />
@@ -29,6 +33,8 @@ function App() {
           <Route path="admin-dashboard" element={<AdminDashboard />} />
           <Route path="admin-signup" element={<AdminReg />} />
           <Route path="admin-login" element={<AdminLogin />} />
+          <Route path="/admin-report" element={<AdminReport />} />
+
           
           {/* <Route path="/user-home" element={<Dashboard />} /> */}
           <Route path="/trade-management" element={<TradeManagement />} />

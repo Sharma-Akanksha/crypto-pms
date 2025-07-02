@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserLayout from '../components/UserLayout';
+import { toast } from 'react-toastify';
 import '../App.css';
 
 const BASE_URL = process.env.NODE_ENV === 'production'
@@ -25,6 +26,7 @@ const TradeSettings = () => {
       setAllocation(res.data?.data?.tradePercentageLimit || 60);
     } catch (err) {
       console.error('Setting fetch failed', err);
+      toast.error('Setting Failed!');
     }
   };
   
@@ -33,17 +35,17 @@ const TradeSettings = () => {
     fetchSettings();
   }, []);
 
-  useEffect(() => {
-    if(saved){
-      const timer = setTimeout(() =>{
-        setSaved(false);
-      }, 3000);
+  // useEffect(() => {
+  //   if(saved){
+  //     const timer = setTimeout(() =>{
+  //       setSaved(false);
+  //     }, 3000);
 
-      return () => clearTimeout(timer);
+  //     return () => clearTimeout(timer);
 
-    }
+  //   }
     
-  }, [saved]);
+  // }, [saved]);
 
   
   const handleSave = async () => {
@@ -57,9 +59,9 @@ const TradeSettings = () => {
       }, { headers });
 
       setSaved(true);
-      
+      toast.success('Saved successfully');
     } catch (err) {
-      alert('Error saving allocation');
+      toast.error('Error saving allocation');
     } finally {
       setLoading(false);
       
@@ -90,7 +92,7 @@ const TradeSettings = () => {
             {loading ? 'Saving...' : 'Save'}
           </button>
 
-          {saved && <p style={{ color: 'green' }}>Saved successfully ✅</p>}
+          {/* {saved && <p style={{ color: 'green' }}>Saved successfully ✅</p>} */}
         </div>
 
       </div>

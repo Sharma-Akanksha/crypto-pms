@@ -11,5 +11,6 @@ router.post('/login', adminCtrl.login);
 // 🔐 Trade Management
 router.post('/place-copy-trade', adminAuth, adminController.placeCopyTrade);
 router.get('/trades', adminAuth, adminController.getAdminTrades);
+router.get('/report', adminAuth, adminController.getAdminReport);
 
 module.exports = router;

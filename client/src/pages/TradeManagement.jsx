@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminLayout from '../components/AdminLayout';
+import { toast } from 'react-toastify';
 import '../App.css';
 
 const BASE_URL = process.env.NODE_ENV === 'production'
@@ -45,6 +46,7 @@ const TradeManagement = () => {
       setRecentTrades(res.data.data || []);
     } catch (err) {
       console.error('Trade fetch failed', err);
+      toast.error('Trade Retreive Issue');
     }
   };
 
@@ -81,12 +83,12 @@ const TradeManagement = () => {
         }
       });
 
-      alert(res.data.message || 'Trade placed successfully!');
+      toast.success(res.data.message || 'Trade placed successfully!');
       setForm({ symbol: '', side: 'buy', quantity: '' });
       fetchTrades();
     } catch (err) {
       console.error('Place order failed:', err);
-      alert(err.response?.data?.message || 'Order failed!');
+      toast.error(err.response?.data?.message || 'Order failed!');
     }
   };
 

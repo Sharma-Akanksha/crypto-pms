@@ -1,6 +1,7 @@
 // AdminLayout.jsx
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { FiHome, FiTrendingUp, FiUsers, FiBarChart2, FiLogOut } from 'react-icons/fi';
 import { logoutUser } from '../utils/logout';
 
@@ -11,7 +12,8 @@ const AdminLayout = ({ children }) => {
   const navItems = [
     { label: 'Dashboard', icon: <FiHome />, path: '/admin-dashboard' },
     { label: 'Trade Management', icon: <FiTrendingUp />, path: '/trade-management' },
-    { label: 'Reports & Analytics', icon: <FiBarChart2 />, path: '/reports-analytics' }
+    { label: 'Analytics', icon: <FiBarChart2 />, path: '/reports-analytics' },
+    { label: 'Reports', icon: <FiBarChart2 />, path: '/admin-report' }
     // Add more as needed
   ];
 

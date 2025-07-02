@@ -934,4 +934,80 @@ body {
 }
 
 
+.admin-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.08);
+}
+
+.admin-report-table thead {
+  background-color: #e8eaf6;
+  color: #333;
+}
+
+.admin-report-table th,
+.admin-report-table td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.admin-report-table th {
+  font-weight: 600;
+}
+
+.admin-report-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.admin-report-table td.green {
+  color: green;
+}
+
+.admin-report-table td.red {
+  color: red;
+}
+
+.admin-report-table td.email {
+  max-width: 230px;
+  word-break: break-word;
+  text-align: left;
+}
+
+.report-container {
+  overflow-x: auto;
+}
+
+.admin-report-table {
+  margin-top: 6%;
+}
+
+/* App.css or AdminSignup.css */
+.admin-signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full screen height */
+  background-color: #f8f9fa;
+}
+
+.admin-signup-form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Set form width */
+}
+
+.signup-page {
+  margin: 0 25%;
+}
+
+
 

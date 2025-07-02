@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import UserLayout from '../components/UserLayout';
+import { toast } from 'react-toastify';
 import { FaHome, FaChartLine, FaUserCog, FaListAlt } from 'react-icons/fa';
 
 const BASE_URL =
@@ -43,6 +44,7 @@ const Dashboard = () => {
       })
       .catch((err) => {
         console.error('Dashboard fetch error:', err.response?.data || err.message);
+        toast.error('Dashboard Error');
         navigate('/login');
       })
       .finally(() => setLoading(false));
